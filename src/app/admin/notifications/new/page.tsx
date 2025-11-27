@@ -168,17 +168,6 @@ export default function NewCampaignPage() {
                                 <p className="text-sm text-muted-foreground">Start the campaign as soon as it's confirmed.</p>
                             </div>
                         </Label>
-                         <Label htmlFor="send-later" className="flex items-center gap-4 border rounded-md p-4 cursor-pointer">
-                            <RadioGroupItem value="later" id="send-later" />
-                             <div>
-                                <h4 className="font-semibold">Schedule for Later</h4>
-                                <p className="text-sm text-muted-foreground">Specify a future date and time for delivery.</p>
-                                 <div className="flex gap-2 mt-2">
-                                    <Input type="date" className="w-auto" />
-                                    <Input type="time" className="w-auto" />
-                                 </div>
-                            </div>
-                        </Label>
                     </RadioGroup>
                 </CardContent>
             </>
