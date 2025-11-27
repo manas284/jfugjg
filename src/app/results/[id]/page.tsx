@@ -8,9 +8,15 @@ import { Button } from '@/components/ui/button';
 import { Download, Share2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function ResultsPage({ params }: { params: { id: string } }) {
-  const attempt = MOCK_TEST_ATTEMPTS.find((a) => a.testId === params.id); // Simple find for mock
-  const test = MOCK_TESTS.find((t) => t.id === params.id);
+type ResultsPageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default function ResultsPage({ params }: ResultsPageProps) {
+  const attempt = MOCK_TEST_ATTEMPTS.find((a) => a.id === params.id); // Correctly find by attempt ID
+  const test = MOCK_TESTS.find((t) => t.id === attempt?.testId);
 
   if (!attempt || !test) {
     notFound();
