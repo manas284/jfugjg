@@ -1,0 +1,320 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the EduPrep Pro platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user.",
+          "format": "uuid"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user.",
+          "format": "email"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name of the user."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name of the user."
+        },
+        "registrationDate": {
+          "type": "string",
+          "description": "Date and time the user registered.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "firstName",
+        "lastName",
+        "registrationDate"
+      ]
+    },
+    "Test": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Test",
+      "type": "object",
+      "description": "Represents a practice test available on the EduPrep Pro platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the test."
+        },
+        "examType": {
+          "type": "string",
+          "description": "Type of exam this test is for (e.g., UPSC, SSC, Banking, GATE)."
+        },
+        "difficulty": {
+          "type": "string",
+          "description": "Difficulty level of the test."
+        },
+        "duration": {
+          "type": "number",
+          "description": "Duration of the test in minutes."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the test."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the test."
+        }
+      },
+      "required": [
+        "id",
+        "examType",
+        "difficulty",
+        "duration",
+        "title",
+        "description"
+      ]
+    },
+    "TestResult": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "TestResult",
+      "type": "object",
+      "description": "Represents the results of a user taking a practice test.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the test result."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N TestResult)"
+        },
+        "testId": {
+          "type": "string",
+          "description": "Reference to Test. (Relationship: Test 1:N TestResult)"
+        },
+        "score": {
+          "type": "number",
+          "description": "The user's score on the test."
+        },
+        "accuracy": {
+          "type": "number",
+          "description": "The user's accuracy percentage on the test."
+        },
+        "completionDate": {
+          "type": "string",
+          "description": "Date and time the test was completed.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "testId",
+        "score",
+        "accuracy",
+        "completionDate"
+      ]
+    },
+    "Question": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Question",
+      "type": "object",
+      "description": "Represents a question in a practice test.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the question."
+        },
+        "testId": {
+          "type": "string",
+          "description": "Reference to Test. (Relationship: Test 1:N Question)"
+        },
+        "questionText": {
+          "type": "string",
+          "description": "The text of the question."
+        },
+        "optionA": {
+          "type": "string",
+          "description": "Text for option A."
+        },
+        "optionB": {
+          "type": "string",
+          "description": "Text for option B."
+        },
+        "optionC": {
+          "type": "string",
+          "description": "Text for option C."
+        },
+        "optionD": {
+          "type": "string",
+          "description": "Text for option D."
+        },
+        "correctAnswer": {
+          "type": "string",
+          "description": "The correct answer option (A, B, C, or D)."
+        }
+      },
+      "required": [
+        "id",
+        "testId",
+        "questionText",
+        "optionA",
+        "optionB",
+        "optionC",
+        "optionD",
+        "correctAnswer"
+      ]
+    },
+    "UserAnswer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserAnswer",
+      "type": "object",
+      "description": "Represents a user's answer to a specific question in a test.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user answer."
+        },
+        "testResultId": {
+          "type": "string",
+          "description": "Reference to TestResult. (Relationship: TestResult 1:N UserAnswer)"
+        },
+        "questionId": {
+          "type": "string",
+          "description": "Reference to Question. (Relationship: Question 1:N UserAnswer)"
+        },
+        "selectedAnswer": {
+          "type": "string",
+          "description": "The answer option selected by the user (A, B, C, or D)."
+        },
+        "isCorrect": {
+          "type": "boolean",
+          "description": "Indicates whether the user's answer was correct."
+        },
+        "markedForReview": {
+          "type": "boolean",
+          "description": "Indicates whether the user marked this question for review."
+        }
+      },
+      "required": [
+        "id",
+        "testResultId",
+        "questionId",
+        "selectedAnswer",
+        "isCorrect",
+        "markedForReview"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Uses path-based ownership for private data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/tests/{testId}",
+        "definition": {
+          "entityName": "Test",
+          "schema": {
+            "$ref": "#/backend/entities/Test"
+          },
+          "description": "Stores practice tests available on the EduPrep Pro platform.",
+          "params": [
+            {
+              "name": "testId",
+              "description": "The unique identifier of the test."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/testResults/{testResultId}",
+        "definition": {
+          "entityName": "TestResult",
+          "schema": {
+            "$ref": "#/backend/entities/TestResult"
+          },
+          "description": "Stores the results of a user taking a practice test. Uses path-based ownership for private data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "testResultId",
+              "description": "The unique identifier of the test result."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/testResults/{testResultId}/userAnswers/{userAnswerId}",
+        "definition": {
+          "entityName": "UserAnswer",
+          "schema": {
+            "$ref": "#/backend/entities/UserAnswer"
+          },
+          "description": "Stores the answers given by a user in a specific test. Uses path-based ownership for private data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "testResultId",
+              "description": "The unique identifier of the test result."
+            },
+            {
+              "name": "userAnswerId",
+              "description": "The unique identifier of the user answer."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/tests/{testId}/questions/{questionId}",
+        "definition": {
+          "entityName": "Question",
+          "schema": {
+            "$ref": "#/backend/entities/Question"
+          },
+          "description": "Stores questions for a given test.",
+          "params": [
+            {
+              "name": "testId",
+              "description": "The unique identifier of the test."
+            },
+            {
+              "name": "questionId",
+              "description": "The unique identifier of the question."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support EduPrep Pro's features while adhering to the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs.  User data is stored under `/users/{userId}`. Tests are stored in a flat `/tests` collection. Test Results, User Answers, and Questions are nested under the user to maintain data ownership and access control. This structure provides clear ownership, facilitates efficient queries for a user's test results and answers, and enables simple security rules based on path-based authorization.\n\n**Authorization Independence (Denormalization):**\nTestResults and UserAnswers are nested under `/users/{userId}`, ensuring that authorization rules can be written based solely on the path (user-owned data). No `get()` calls are needed to verify ownership. The `testId` is denormalized in `TestResult` to enable queries for test results based on a specific test, without needing to perform a collection group query which could be less efficient or require additional indexing.\n\n**Structural Segregation:**\nThe `/users/{userId}` collection stores only user data. The `/tests` collection contains all available tests, and test results are stored within user-specific subcollections. This segregation ensures that documents with different access requirements are stored in separate collections, simplifying security rules.\n\n**Access Modeling:**\nPath-based ownership is used for private user data (`/users/{userId}`).\n\n**QAPs Support:**\nSegregation into `/users/{userId}/testResults` allows secure `list` operations for test results owned by a specific user. The flat `/tests` collection allows listing all tests available on the platform. The use of path-based ownership ensures that a user can only access their own test results."
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "placeholderImages": [
+    {
+      "id": "upsc-prelims",
+      "description": "UPSC Prelims Mock Test",
+      "imageUrl": "https://images.unsplash.com/photo-1555847979-6d8252ad1891?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsaWJyYXJ5JTIwYnVpbGRpbmd8ZW58MHx8fHwxNzY0MTY5MjYwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "library building"
+    },
+    {
+      "id": "ssc-cgl",
+      "description": "SSC CGL Mock Test",
+      "imageUrl": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2V8ZW58MHx8fHwxNzY0MTQyNzg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern office"
+    },
+    {
+      "id": "ibps-po",
+      "description": "IBPS PO Mock Test",
+      "imageUrl": "https://images.unsplash.com/photo-1609358905581-e5381612486e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxiYW5rJTIwdmF1bHR8ZW58MHx8fHwxNzY0MTY5MjYwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bank vault"
+    },
+    {
+      "id": "gate-cs",
+      "description": "GATE CS Mock Test",
+      "imageUrl": "https://images.unsplash.com/photo-1592659762303-90081d34b277?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjaXJjdWl0JTIwYm9hcmR8ZW58MHx8fHwxNzY0MDY1ODY4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "circuit board"
+    },
+    {
+      "id": "upsc-csat",
+      "description": "UPSC CSAT Mock Test",
+      "imageUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxncmFwaHMlMjBjaGFydHN8ZW58MHx8fHwxNzY0MTY5MjYxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "graphs charts"
+    },
+    {
+      "id": "ssc-chsl",
+      "description": "SSC CHSL Mock Test",
+      "imageUrl": "https://images.unsplash.com/photo-1618656172765-26774a4a38d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxnb3Zlcm5tZW50JTIwYnVpbGRpbmd8ZW58MHx8fHwxNzY0MDgwNDY5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "government building"
+    }
+  ]
+}

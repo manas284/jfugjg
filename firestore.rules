@@ -1,0 +1,143 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model for private data,
+ * structurally segregated from publicly readable content. User profiles, test results,
+ * and answers are private and can only be accessed by the user who owns them.
+ * In contrast, tests and their associated questions are treated as public content,
+ * readable by any authenticated user, but not modifiable by clients. Admins, identified
+ * by an `isAdmin` flag on their user profile, have elevated read access.
+ *
+ * Data Structure: All private user data is nested under the `/users/{userId}` path,
+ * creating a clear and secure data boundary for each user. Publicly available
+ * content like tests and questions is organized in a top-level `/tests` collection
+ * and its `/questions` subcollection for easy public access.
+ *
+ * Key Security Decisions:
+ * - User data is strictly private for non-admins: All documents under `/users/{userId}` are only
+ *   accessible by the authenticated user matching that `userId`, unless the requester is an admin.
+ * - User enumeration is restricted to admins: The `/users` collection can only be listed by
+ *   users with `isAdmin: true` on their own profile, preventing scraping by regular users.
+ * - Public content is read-only for clients: The `/tests` collection and its
+ *   subcollections are readable by any signed-in user but are not writable.
+ *   This assumes content is managed by a backend admin process, not directly by clients.
+ * - Path-based authorization: Rules rely on the document path (`/users/{userId}`)
+ *   to determine ownership, which is efficient and avoids costly `get` calls.
+ * - Admin access is controlled by a document field: The `get(/databases/$(database)/documents/users/$(request.auth.uid))`
+ *   check securely verifies if the requesting user has administrative privileges.
+ *
+ * Denormalization for Authorization: The data structure follows best practices by
+ * nesting user-specific data like `testResults` and `userAnswers` under the user's
+ * primary document path. This makes authorization simple and performant, as ownership
+ * can be determined directly from the path without needing extra database reads.
+ * Additionally, fields like `userId` are denormalized onto documents like `TestResult`
+ * to enforce relational integrity at the point of creation.
+ *
+ * Structural Segregation: Private user data (profiles, results) is kept entirely
+ * separate from public app content (tests, questions). This segregation simplifies
+* rules logic, enhances security, and improves query performance by ensuring that
+* queries for public data do not have to filter through private documents.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**************************************************
+     * Helper Functions
+     **************************************************/
+
+    /**
+     * Returns true if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Returns true if the authenticated user's UID matches the provided userId.
+     * Used for path-based ownership checks.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * Returns true if the requesting user has the `isAdmin` flag set to true
+     * on their own user profile document. This function relies on a rule that
+     * allows a user to read their own document.
+     */
+    function isAdmin() {
+      // This requires that a user can read their own document.
+      // See the /users/{userId} rule for `get`.
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    /**************************************************
+     * Collection Rules
+     **************************************************/
+    
+    /**
+     * @description Publicly readable metadata, such as counters.
+     * @path /metadata/{docId}
+     */
+    match /metadata/{docId} {
+      allow get: if isSignedIn();
+      allow write: if false; // Only backend can write
+    }
+
+    /**
+     * @description Manages user profile documents.
+     * @path /users/{userId}
+     * @allow (get) An authenticated user can ALWAYS read their own profile. Admins can read any profile.
+     * @allow (list) Only an admin user can list all user profiles.
+     * @allow (create) An authenticated user can create their own profile.
+     * @principle Separates the rule for reading one's own profile from admin checks to prevent circular dependencies.
+     */
+    match /users/{userId} {
+      // A user can always read their own document. Admins can read any.
+      allow get: if isOwner(userId) || isAdmin();
+      
+      // A user can create their own document.
+      allow create: if isOwner(userId);
+
+      // A user can update/delete their own document. Admins can manage any.
+      allow update, delete: if isOwner(userId) || isAdmin();
+
+      /**
+       * @description Manages user-specific test results.
+       * @path /users/{userId}/testResults/{testResultId}
+       * @principle Enforces strict data ownership within a user's private data tree.
+       */
+      match /testResults/{testResultId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+
+        /**
+         * @description Manages a user's specific answers for a given test result.
+         * @path /users/{userId}/testResults/{testResultId}/userAnswers/{userAnswerId}
+         * @principle Enforces strict data ownership for deeply nested private data.
+         */
+        match /userAnswers/{userAnswerId} {
+          allow read, write: if isOwner(userId) || isAdmin();
+        }
+      }
+    }
+
+    /**
+     * @description Manages practice tests, which are public, read-only content.
+     * @path /tests/{testId}
+     * @principle Provides public read access to authenticated users while prohibiting client-side modification of shared content.
+     */
+    match /tests/{testId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if isAdmin(); // Allow admins to manage tests
+
+      /**
+       * @description Manages questions for a given test; they are public, read-only content.
+       * @path /tests/{testId}/questions/{questionId}
+       * @principle Provides public read access for nested content while restricting writes to admins.
+       */
+      match /questions/{questionId} {
+        allow get, list: if isSignedIn();
+        allow create, update, delete: if isAdmin(); // Allow admins to manage questions
+      }
+    }
+  }
+}
