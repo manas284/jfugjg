@@ -1,3 +1,4 @@
+
 import { ScoreSummary } from '@/components/results/score-summary';
 import { SubjectBreakdown } from '@/components/results/subject-breakdown';
 import { AnswerAnalysis } from '@/components/results/answer-analysis';
@@ -8,7 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Download, Share2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function ResultsPage({ params }: { params: { id: string } }) {
+// Define the correct props type for a page with dynamic route parameters
+type ResultsPageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default function ResultsPage({ params }: ResultsPageProps) {
   const attempt = MOCK_TEST_ATTEMPTS.find((a) => a.id === params.id);
   const test = MOCK_TESTS.find((t) => t.id === attempt?.testId);
 
